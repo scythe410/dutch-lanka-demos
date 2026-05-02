@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Context for Claude Code working in the Dutch Lanka repo. Read this before making changes.
+Context for Claude Code working in the Dutch Lanka repo. Read this before making changes. **Also read `docs/progress.md` at the start of every session** to understand current state — it's the running log of what's been built.
 
 ## Project overview
 
@@ -190,6 +190,21 @@ Re-read `docs/architecture.md` section 4.3 (payment flow) before editing anythin
 - Don't use `print` — use the `logger` package.
 - Don't use `localStorage`-equivalent persistence for sensitive data. Use `flutter_secure_storage` for tokens.
 - Don't introduce hardcoded strings for user-facing text. Use `intl` from day one — Sinhala/Tamil localization is in the roadmap.
+
+## Progress logging
+
+This project is built across many sessions following `docs/prompt_flow.md` (a separate developer-side doc, not for Claude Code to follow directly). Because Claude Code has no memory between sessions, `docs/progress.md` is the project's persistent memory.
+
+Rules:
+- **Read `docs/progress.md` at the start of every session.** It tells you where the project is and what's next.
+- **Update `docs/progress.md` at the end of every step before stopping.** This is non-negotiable — skipping it means the next session starts blind.
+- Move "Current status" forward to reflect the just-completed step and the next one.
+- Add a new entry under "Step log" describing what was built, any deviations from the prompt's instructions, and any TODOs left behind.
+- Note non-obvious choices in "Decisions" with a one-line rationale (e.g. "chose package X over Y because…").
+- Note bugs or hacks in "Known issues".
+- Keep entries terse — bullets, not essays. Future sessions will skim, not read.
+
+If `docs/progress.md` doesn't exist yet, the user will prompt you to create it.
 
 ## Definition of done
 
