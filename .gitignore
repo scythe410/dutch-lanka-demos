@@ -1,0 +1,89 @@
+# =============================================================================
+# Dutch Lanka — .gitignore
+# =============================================================================
+
+# --------------- OS / Editor ---------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.iml
+
+# --------------- Flutter / Dart ---------------
+# Dart/Flutter build outputs
+**/build/
+**/.dart_tool/
+**/.packages
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.pub-cache/
+**/.pub/
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+
+# Flavor-specific Firebase options (prod is secret)
+**/firebase_options_prod.dart
+
+# Platform-specific prod configs (never commit prod keys)
+**/android/app/src/prod/google-services.json
+**/ios/Runner/prod/GoogleService-Info.plist
+
+# Dev/staging Firebase configs can be committed — uncomment to block them too:
+# **/google-services.json
+# **/GoogleService-Info.plist
+
+# Flutter-generated native project files
+**/android/.gradle/
+**/android/local.properties
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/app.framework
+**/ios/Flutter/engine/
+**/ios/Flutter/flutter_export_environment.sh
+
+# --------------- Cloud Functions (Node.js) ---------------
+functions/node_modules/
+functions/lib/
+
+# --------------- Firebase ---------------
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+pubsub-debug.log
+storage-debug.log
+database-debug.log
+
+# --------------- Environment / Secrets ---------------
+.env
+.env.*
+*.env
+*.key
+*.pem
+*.p12
+*.jks
+service-account*.json
+
+# PayHere live credentials
+payhere_live_*.txt
+
+# --------------- Coverage / Test ---------------
+coverage/
+*.lcov
+test-results/
+
+# --------------- Misc ---------------
+*.log
+.mcp.json
