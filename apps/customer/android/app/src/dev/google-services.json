@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "575727588900",
+    "project_id": "dutch-lanka-dev",
+    "storage_bucket": "dutch-lanka-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:575727588900:android:2f569fc9efa9e8a04e6ab1",
+        "android_client_info": {
+          "package_name": "lk.dutchlanka.dutch_lanka_customer.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCz7GC5EacXrB5KH-98Cok6SifBaEWk5yM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
