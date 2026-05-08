@@ -26,7 +26,7 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:dutch_lanka_shared/dutch_lanka_shared.dart';
 import 'package:payhere_mobilesdk_flutter/payhere_mobilesdk_flutter.dart';
 
 /// Outcome the SDK reports back to the caller. Authoritative payment
@@ -49,19 +49,19 @@ class PayHereService {
       payload,
       (paymentId) {
         // SDK reports success — payhereNotify is the truth, not this.
-        debugPrint('PayHere SDK onCompleted: $paymentId');
+        appLogger.i('PayHere SDK onCompleted: $paymentId');
         if (!completer.isCompleted) {
           completer.complete(PayHereResult.sdkSuccess);
         }
       },
       (error) {
-        debugPrint('PayHere SDK onError: $error');
+        appLogger.w('PayHere SDK onError: $error');
         if (!completer.isCompleted) {
           completer.complete(PayHereResult.sdkError);
         }
       },
       () {
-        debugPrint('PayHere SDK onDismissed');
+        appLogger.i('PayHere SDK onDismissed');
         if (!completer.isCompleted) {
           completer.complete(PayHereResult.sdkDismissed);
         }

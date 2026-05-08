@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dutch_lanka_shared/dutch_lanka_shared.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -95,7 +95,7 @@ class FcmService {
       if (token == null) return;
       await _writeToken(user.uid, token);
     } catch (e, st) {
-      debugPrint('Manager FCM register failed: $e\n$st');
+      appLogger.w('Manager FCM register failed', error: e, stackTrace: st);
     }
   }
 

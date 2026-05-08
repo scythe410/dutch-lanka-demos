@@ -16,6 +16,9 @@ export 'widgets/product_card.dart';
 export 'widgets/kpi_tile.dart';
 export 'widgets/product_detail_panel.dart';
 export 'widgets/delivery_tracking_card.dart';
+export 'widgets/error_boundary.dart';
+
+export 'utils/app_logger.dart';
 
 export 'dev/widget_gallery_screen.dart';
 

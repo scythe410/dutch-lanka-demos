@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
+import 'package:dutch_lanka_shared/dutch_lanka_shared.dart';
 import 'package:geolocator/geolocator.dart';
 
 /// Ping cadence. Architecture.md §4.4 says 10–30 seconds; 15 is the
@@ -96,7 +96,7 @@ class DriverPingService {
       });
     } catch (e, st) {
       // PII-free log per CLAUDE.md rule 6 — coordinates are not logged.
-      debugPrint('DriverPingService flush failed: $e\n$st');
+      appLogger.w('DriverPingService flush failed', error: e, stackTrace: st);
     }
   }
 

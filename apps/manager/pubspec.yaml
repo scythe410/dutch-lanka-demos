@@ -42,6 +42,9 @@ dependencies:
   firebase_storage: ^12.3.2
   firebase_messaging: ^15.1.3
   firebase_app_check: ^0.3.1+5
+  firebase_crashlytics: ^4.1.3
+  firebase_performance: ^0.10.0+8
+  logger: ^2.4.0
 
   dutch_lanka_shared:
     path: ../../packages/shared
@@ -62,6 +65,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.4
+  flutter_launcher_icons: ^0.14.1
+  flutter_native_splash: ^2.4.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -83,6 +88,27 @@ flutter:
 
   assets:
     - .env
+    - assets/branding/
+
+# Launcher icons — regenerate with `flutter pub run flutter_launcher_icons`.
+# Manager app uses its own source so the staff console is visually distinct
+# on home screens shared with the customer build.
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/branding/app_icon.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
+  background_color_ios: "#FAF3E1"
+  adaptive_icon_background: "#FAF3E1"
+  adaptive_icon_foreground: "assets/branding/app_icon.png"
+
+flutter_native_splash:
+  color: "#FFA951"
+  android: true
+  ios: true
+  android_12:
+    color: "#FFA951"
 
   # To add assets to your application, add an assets section, like this:
   # assets:
