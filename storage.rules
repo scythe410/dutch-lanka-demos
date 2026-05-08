@@ -1,0 +1,48 @@
+rules_version = '2';
+
+// Mirrors docs/architecture.md §3.5: products/* readable by anyone authed,
+// writable only by managers. Same model for ingredient and topping
+// thumbnails (used in the customer app's customization flow). Marketing
+// assets (onboarding photos, banners) follow the same rule. Default deny.
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuthed()  { return request.auth != null; }
+    function isManager() { return isAuthed() && request.auth.token.role == 'manager'; }
+    function isOwner(uid) { return isAuthed() && request.auth.uid == uid; }
+
+    // Profile photos: each user owns their own folder; everyone authed
+    // can read (so order tickets can show a customer avatar). 5MB cap.
+    match /users/{uid}/{file=**} {
+      allow read: if isAuthed();
+      allow write: if isOwner(uid)
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    match /products/{productId}/{file=**} {
+      allow read: if isAuthed();
+      allow write: if isManager();
+    }
+
+    match /ingredients/{file=**} {
+      allow read: if isAuthed();
+      allow write: if isManager();
+    }
+
+    match /toppings/{file=**} {
+      allow read: if isAuthed();
+      allow write: if isManager();
+    }
+
+    match /marketing/{file=**} {
+      allow read: if isAuthed();
+      allow write: if isManager();
+    }
+
+    // Default deny for anything not explicitly allowed above.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "dutch-lanka-dev",
+    "dev": "dutch-lanka-dev",
+    "staging": "dutch-lanka-staging",
+    "prod": "dutch-lanka-prod"
+  }
+}

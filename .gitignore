@@ -77,6 +77,11 @@ database-debug.log
 *.jks
 service-account*.json
 
+# Firebase Functions emulator secrets — populated by `functions:secrets:set`
+# at runtime, mirrored into .secret.local for the local emulator.
+.secret.local
+.secret.*
+
 # PayHere live credentials
 payhere_live_*.txt
 

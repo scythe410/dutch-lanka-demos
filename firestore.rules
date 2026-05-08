@@ -1,0 +1,112 @@
+rules_version = '2';
+
+// Mirrors docs/architecture.md §7.2. Default deny: any path not matched
+// below is forbidden. Business writes (orders, payment status, stock,
+// roles) go through Cloud Functions — never the client.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthed()      { return request.auth != null; }
+    function role()          { return request.auth.token.role; }
+    function isCustomer()    { return isAuthed() && role() == 'customer'; }
+    function isManager()     { return isAuthed() && role() == 'manager'; }
+    function isStaff()       { return isAuthed() && role() in ['manager', 'staff']; }
+    function isOwner(uid)    { return isAuthed() && request.auth.uid == uid; }
+
+    // Users: read own doc; managers may read any. Profile is created by the
+    // `onUserCreate` Cloud Function. The user can update everything except
+    // their own role (custom claim is the source of truth anyway).
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isManager();
+      // `onUserCreate` Cloud Function is intended to own the create path
+      // but isn't shipped yet — allow self-create from the client as long
+      // as the writer doesn't try to set their own role. The role custom
+      // claim is the authoritative source either way (architecture rule 3).
+      allow create: if isOwner(uid)
+                    && request.resource.data.uid == uid
+                    && !('role' in request.resource.data.keys());
+      allow update: if isOwner(uid)
+                    && !('role' in request.resource.data.diff(resource.data).affectedKeys());
+      allow delete: if false;
+
+      match /addresses/{addressId} {
+        allow read, write: if isOwner(uid);
+      }
+
+      match /favorites/{productId} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    // Products: anyone authed reads; only managers write. Reviews are
+    // created by the customer; the userId on a new review must match the
+    // creator's uid (no impersonation).
+    match /products/{productId} {
+      allow read: if isAuthed();
+      allow write: if isManager();
+
+      match /reviews/{reviewId} {
+        allow read: if isAuthed();
+        allow create: if isCustomer()
+                      && request.resource.data.userId == request.auth.uid;
+        allow update, delete: if isManager();
+      }
+    }
+
+    // Orders: customer reads their own; staff/managers read all. No client
+    // writes — `createOrder` and `payhereNotify` Cloud Functions own this.
+    match /orders/{orderId} {
+      allow read: if isOwner(resource.data.customerId) || isStaff();
+      allow create, update, delete: if false;
+
+      // Status history: read only, staff or order owner.
+      match /statusHistory/{eventId} {
+        allow read: if isStaff()
+                    || isOwner(get(/databases/$(database)/documents/orders/$(orderId)).data.customerId);
+        allow write: if false;
+      }
+
+      // Tracking: customer reads their own order's pings; staff write.
+      match /tracking/{pingId} {
+        allow read: if isStaff()
+                    || isOwner(get(/databases/$(database)/documents/orders/$(orderId)).data.customerId);
+        allow create: if isStaff();
+        allow update, delete: if false;
+      }
+    }
+
+    // Low-stock alerts: managers only. Created by `onOrderCreate`; managers
+    // may flip `acknowledged`.
+    match /lowStockAlerts/{alertId} {
+      allow read, write: if isManager();
+    }
+
+    // Complaints: customer creates their own (customerId must match), reads
+    // their own; staff reads all and updates status. Replies live in the
+    // /messages subcollection.
+    match /complaints/{complaintId} {
+      allow read: if isStaff()
+                  || isOwner(resource.data.customerId);
+      allow create: if isCustomer()
+                    && request.resource.data.customerId == request.auth.uid;
+      allow update: if isStaff();
+      allow delete: if false;
+
+      match /messages/{msgId} {
+        allow read: if isStaff()
+                    || isOwner(get(/databases/$(database)/documents/complaints/$(complaintId)).data.customerId);
+        allow create: if isStaff()
+                      || (isCustomer()
+                          && isOwner(get(/databases/$(database)/documents/complaints/$(complaintId)).data.customerId)
+                          && request.resource.data.userId == request.auth.uid);
+        allow update, delete: if false;
+      }
+    }
+
+    // Promotions: anyone authed reads; only managers write.
+    match /promotions/{promoId} {
+      allow read: if isAuthed();
+      allow write: if isManager();
+    }
+  }
+}
