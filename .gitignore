@@ -93,3 +93,9 @@ test-results/
 # --------------- Misc ---------------
 *.log
 .mcp.json
+
+# Local Claude Code session state (scheduled-task locks, local settings).
+.claude/
+
+# Flutter DevTools per-checkout preferences.
+**/devtools_options.yaml
