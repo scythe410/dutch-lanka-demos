@@ -8,6 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'app.dart';
 import 'firebase/bootstrap.dart';
+import 'firebase/emulator.dart';
 import 'firebase/firebase_options_dev.dart';
 import 'services/fcm_background.dart';
 
@@ -20,6 +21,7 @@ Future<void> main() async {
     );
     await initFirebaseHardening(isProd: false);
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    await connectToEmulators();
     appLogger.i('Firebase initialized [dev]: ${app.options.projectId}');
     runApp(const App(environment: AppEnvironment.dev));
   }, (error, stack) {
