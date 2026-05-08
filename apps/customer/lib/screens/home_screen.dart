@@ -145,7 +145,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           crossAxisCount: 2,
                           crossAxisSpacing: Space.lg,
                           mainAxisSpacing: Space.lg,
-                          childAspectRatio: 0.72,
+                          // Card is square image (1:1 = full width tall) plus
+                          // ~108 dp of body (title + price + stars + 2× 16
+                          // padding). 0.62 covers that with a few dp slack so
+                          // a wider title or display-scale bump doesn't
+                          // overflow on the demo device.
+                          childAspectRatio: 0.62,
                         ),
                         itemCount: filtered.length,
                         itemBuilder: (context, i) {
