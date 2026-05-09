@@ -7,8 +7,11 @@ import '../theme/spacing.dart';
 import '../theme/text_theme.dart';
 
 /// Standard form field per design.md §8 `AppTextField`.
-/// Cream fill, no resting border, 1.5px orange focused border, optional
-/// helper or error text below (silver / black — no red, per design rules).
+/// Cream fill, 1px silver resting border (so the field has visible edges
+/// when sitting on a cream background — the design doc assumes a
+/// contrasting parent surface, but most screens use cream too), 1.5px
+/// orange focused border, optional helper or error text below (silver /
+/// black — no red, per design rules).
 class AppTextField extends StatefulWidget {
   const AppTextField({
     super.key,
@@ -99,11 +102,11 @@ class _AppTextFieldState extends State<AppTextField> {
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.input),
-              borderSide: BorderSide.none,
+              borderSide: const BorderSide(color: AppColors.muted, width: 1),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.input),
-              borderSide: BorderSide.none,
+              borderSide: const BorderSide(color: AppColors.muted, width: 1),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.input),
@@ -111,7 +114,7 @@ class _AppTextFieldState extends State<AppTextField> {
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.input),
-              borderSide: BorderSide.none,
+              borderSide: const BorderSide(color: AppColors.muted, width: 1),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(AppRadius.input),

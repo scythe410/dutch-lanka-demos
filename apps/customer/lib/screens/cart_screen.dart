@@ -92,6 +92,7 @@ class CartScreen extends ConsumerWidget {
                     ),
                     PrimaryButton(
                       label: 'Checkout',
+                      fullWidth: false,
                       onPressed: () => context.push('/checkout'),
                     ),
                   ],

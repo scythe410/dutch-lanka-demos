@@ -146,11 +146,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           crossAxisSpacing: Space.lg,
                           mainAxisSpacing: Space.lg,
                           // Card is square image (1:1 = full width tall) plus
-                          // ~108 dp of body (title + price + stars + 2× 16
-                          // padding). 0.62 covers that with a few dp slack so
-                          // a wider title or display-scale bump doesn't
-                          // overflow on the demo device.
-                          childAspectRatio: 0.62,
+                          // body (16 padding + title + 4 + price + 8 + stars
+                          // + 16 padding ≈ 110 dp on a Pixel 8 with default
+                          // font scale). 0.58 leaves real headroom — 0.62
+                          // was off by ~1.5 dp once the star row was drawn.
+                          childAspectRatio: 0.58,
                         ),
                         itemCount: filtered.length,
                         itemBuilder: (context, i) {
