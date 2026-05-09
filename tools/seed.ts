@@ -7,21 +7,42 @@
  *               tsx tools/seed.ts`
  *
  * Refuses to run unless the emulator env vars are set — never run this
- * against a real project.
+ * against a real project unless you explicitly opt in by setting
+ * ALLOW_DEPLOYED_SEED=1 plus GOOGLE_APPLICATION_CREDENTIALS pointing at a
+ * service-account key for the target project.
  */
 
 import * as admin from 'firebase-admin';
 
-if (!process.env.FIRESTORE_EMULATOR_HOST || !process.env.FIREBASE_AUTH_EMULATOR_HOST) {
+const usingEmulator =
+  !!process.env.FIRESTORE_EMULATOR_HOST && !!process.env.FIREBASE_AUTH_EMULATOR_HOST;
+const allowDeployedSeed = process.env.ALLOW_DEPLOYED_SEED === '1';
+
+if (!usingEmulator && !allowDeployedSeed) {
   console.error(
     '\n[seed] Refusing to run: FIRESTORE_EMULATOR_HOST and ' +
       'FIREBASE_AUTH_EMULATOR_HOST must both be set.\n' +
-      '       Run via `npm run seed` from /functions, or start the emulator first.\n'
+      '       Run via `npm run seed` from /functions, or start the emulator first.\n' +
+      '       To seed a deployed project on purpose, set ALLOW_DEPLOYED_SEED=1\n' +
+      '       and GOOGLE_APPLICATION_CREDENTIALS to a service-account key path.\n'
+  );
+  process.exit(1);
+}
+
+if (allowDeployedSeed && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+  console.error(
+    '\n[seed] ALLOW_DEPLOYED_SEED=1 set, but GOOGLE_APPLICATION_CREDENTIALS\n' +
+      '       is missing — refusing to run anonymously against a real project.\n'
   );
   process.exit(1);
 }
 
 admin.initializeApp({projectId: process.env.GCLOUD_PROJECT ?? 'dutch-lanka-dev'});
+
+console.log(
+  `[seed] target: ${usingEmulator ? 'EMULATOR' : 'DEPLOYED'} ` +
+    `project=${process.env.GCLOUD_PROJECT ?? 'dutch-lanka-dev'}`
+);
 const db = admin.firestore();
 const auth = admin.auth();
 
