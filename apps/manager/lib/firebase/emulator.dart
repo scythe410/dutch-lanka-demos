@@ -10,9 +10,17 @@ import 'package:flutter/foundation.dart';
 /// Set via `--dart-define=USE_EMULATOR=true` at run/build time.
 const useEmulator = bool.fromEnvironment('USE_EMULATOR', defaultValue: false);
 
+/// Optional override for the emulator host — useful when running on a
+/// **physical Android device** with `adb reverse` forwarding the laptop's
+/// emulator ports back to the phone. Pass `--dart-define=EMULATOR_HOST=localhost`.
+const _emulatorHostOverride = String.fromEnvironment('EMULATOR_HOST');
+
 /// Android emulators route the host machine's localhost to 10.0.2.2;
-/// iOS simulators and desktop builds use plain localhost.
+/// iOS simulators and desktop builds use plain localhost. With `adb reverse`
+/// on a real device, pass EMULATOR_HOST=localhost to skip the AVD-only
+/// 10.0.2.2 mapping.
 String _emulatorHost() {
+  if (_emulatorHostOverride.isNotEmpty) return _emulatorHostOverride;
   if (!kIsWeb && Platform.isAndroid) return '10.0.2.2';
   return 'localhost';
 }
