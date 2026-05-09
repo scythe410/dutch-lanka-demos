@@ -36,10 +36,18 @@ All four must be green. If any flake, **stop and fix** — don't redeploy a flak
 
 ```
 firebase use dev
-firebase deploy --only firestore:rules,storage:rules,firestore:indexes \
-                --project dutch-lanka-dev
+firebase deploy --only firestore:rules,firestore:indexes --project dutch-lanka-dev
+firebase deploy --only storage --project dutch-lanka-dev
 firebase deploy --only functions --project dutch-lanka-dev
 ```
+
+**First-time-on-a-new-project gotchas** (only matter the first time):
+
+- `firebase deploy --only storage:rules` (with the `:rules` suffix) errors with "Could not find rules for the following storage targets: rules" on projects that have the new `firebasestorage.app` bucket format. Use `--only storage` instead — the CLI then resolves the default bucket itself.
+- The first Functions deploy will demand a sequence of one-click API enables (Cloud Functions, Cloud Build, Artifact Registry, Eventarc, Pub/Sub, Run, Secret Manager). Just keep retrying — each error message links to the enable page.
+- `defineSecret` parameters (e.g. `PAYHERE_MERCHANT_SECRET`) need the value set in Secret Manager before deploy: `firebase functions:secrets:set PAYHERE_MERCHANT_SECRET --project dutch-lanka-dev`.
+- The deploy may print three `gcloud projects add-iam-policy-binding ...` commands ("We failed to modify the IAM policy for the project"). Run them as project Owner; they grant `roles/iam.serviceAccountTokenCreator` to the Pub/Sub agent and `roles/run.invoker` + `roles/eventarc.eventReceiver` to the compute service account. Then retry.
+- 2nd-gen Firestore-trigger functions (`onOrderCreate`, `onOrderStatusChange`) frequently fail on the **first** deploy with "Permission denied while using the Eventarc Service Agent" while the agent's permissions propagate. The CLI suggests "Retry the deployment in a few minutes" — wait ~3 min and re-deploy just those two: `firebase deploy --only functions:onOrderCreate,functions:onOrderStatusChange --project dutch-lanka-dev`.
 
 Smoke against dev:
 

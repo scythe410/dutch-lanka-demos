@@ -9,7 +9,8 @@ When you finish a step, add a new subsection under "Step log" and update "Curren
 ## Current status
 
 - **History reorganised 2026-05-09:** the previous two large rollup commits (5df7307 + 019c0cd) were unwound via `git reset --mixed` and rebuilt forward as 17 small, themed commits ending at HEAD. Each commit is single-purpose with a short conventional-commit subject. Earlier ancestors (541ebca, c54f55d, a574c97, 84015d7) are unchanged. No `git rebase -i` or filter-branch was used.
-- **Last completed:** Step 12.2 — manager app now signs in against the local emulator and renders products. Two fixes: ported `firebase/emulator.dart` + a `connectToEmulators()` call into the manager app's `main_dev.dart` (it had been customer-only since Step 11), and added a debug-only `network_security_config.xml` to both apps that whitelists `10.0.2.2` / `localhost` for cleartext HTTP — Android API 28+ blocks plain HTTP by default and the Auth/Firestore emulators are HTTP. Release/prod manifests inherit the secure default. Also wrote `functions/.env.local`, `functions/.env.dutch-lanka-dev`, and `functions/.secret.local` so the Functions emulator stops prompting for `PAYHERE_NOTIFY_URL`/`MERCHANT_ID`/`MERCHANT_SECRET` at every startup.
+- **Last completed:** Step 13 — backend deployed to `dutch-lanka-dev` and both apps installed standalone on a real Pixel 9. Firestore rules + indexes, Storage rules, and all 5 Cloud Functions (`createOrder`, `payhereNotify`, `onOrderCreate`, `onOrderStatusChange`, `setManagerRole`) are live in `asia-south1`. `payhereNotify` URL: `https://asia-south1-dutch-lanka-dev.cloudfunctions.net/payhereNotify`. Deployed Firestore + Auth seeded with the same demo data (10 products, `customer@dutchlanka.test` / `manager@dutchlanka.test`). Both dev-debug APKs installed on the Pixel 9 via `adb install` — the phone now talks to deployed Firebase directly, laptop no longer required. `tools/seed.ts` extended with an `ALLOW_DEPLOYED_SEED=1` opt-in (still requires `GOOGLE_APPLICATION_CREDENTIALS`) so the same script can target the deployed project.
+- **Earlier in this session — Step 12.2** — manager app now signs in against the local emulator and renders products. Two fixes: ported `firebase/emulator.dart` + a `connectToEmulators()` call into the manager app's `main_dev.dart` (it had been customer-only since Step 11), and added a debug-only `network_security_config.xml` to both apps that whitelists `10.0.2.2` / `localhost` for cleartext HTTP — Android API 28+ blocks plain HTTP by default and the Auth/Firestore emulators are HTTP. Release/prod manifests inherit the secure default. Also wrote `functions/.env.local`, `functions/.env.dutch-lanka-dev`, and `functions/.secret.local` so the Functions emulator stops prompting for `PAYHERE_NOTIFY_URL`/`MERCHANT_ID`/`MERCHANT_SECRET` at every startup.
 - **Earlier in this session — Step 12.1** — Android build fixes. Both apps boot to `Firebase initialized [dev]: dutch-lanka-dev`. Three fixes: enabled core library desugaring (`isCoreLibraryDesugaringEnabled = true` + `desugar_jdk_libs:2.0.4`) so `flutter_local_notifications` 17 builds; cleared a corrupted `~/.gradle/caches/8.14/kotlin-dsl` from an earlier aborted build; bumped Gradle's HTTP connect/read timeouts to 5 min so flaky wifi during the first-time Maven download doesn't fail the build. iOS still untested — needs the manual Xcode flavor setup from `docs/ios_flavors_setup.md` first.
 - **Earlier in this session — Step 12** — final demo hardening. App Check (debug provider in dev, Play Integrity / DeviceCheck in prod) wired into both apps via a shared `firebase/bootstrap.dart`. Crashlytics + Performance Monitoring added: Gradle plugins (`com.google.firebase.crashlytics` 3.0.2, `com.google.firebase.firebase-perf` 1.4.2) registered on both apps, `FlutterError.onError` + `PlatformDispatcher.instance.onError` + `runZonedGuarded` route framework / async / zoned errors into `FirebaseCrashlytics.recordError`, collection disabled in `kDebugMode`. Global error boundary lives in `packages/shared/lib/widgets/error_boundary.dart` — installs a `FlutterError.onError` that forwards to a reporter callback (Crashlytics) and swaps `ErrorWidget.builder` for a friendly Soft-Cream "Something went wrong / Try again" screen in release. Stray `debugPrint` calls in `services/` and `firebase/emulator.dart` replaced by a shared `appLogger` (`logger` package, exported from `dutch_lanka_shared`). Theme audit fixed four hardcoded radii (page indicator dot, cart-badge pill, two drag handles, chart legend swatch) by extending `AppRadius` with `dragHandle/indicator/chip/badge`, and centralised the soft-shadow tint as `AppColors.shadow`. Launcher icons + native splash configured via `flutter_launcher_icons` (adaptive Android, iOS-safe alpha removal, Soft-Cream background) and `flutter_native_splash` (Warm-Orange colour-only, Android 12 spec covered) — branding source lives at `apps/<app>/assets/branding/app_icon.png` (currently the Flutter placeholder pending the real wordmark; README in each branding dir documents the swap-and-regenerate flow). New `docs/runbook.md` covers prod deploy with a manual approval gate, manager provisioning, the dev seeder, function rollback (full + targeted), and a log-locations table (Crashlytics / Performance / Functions logs / Logs Explorer / App Check denials / PayHere webhook).
 - **Verification 2026-05-08 (Step 12):** `flutter analyze` clean across customer/manager/shared. `flutter test` — customer 10/10, shared 25/25, manager 20/20. `npm run lint` + `npm run build` (functions) clean. `npm run test:functions` — 35/35.
@@ -38,6 +39,69 @@ For a non-emulator dev project, replace step 3 with a one-shot admin script (or 
 ---
 
 ## Step log
+
+### Step 13 — Deploy backend to dev + install standalone on Pixel 9 (2026-05-09)
+
+Goal: get the apps running on a real phone without the laptop tethered. Required deploying everything to `dutch-lanka-dev`, seeding the deployed project, and installing the dev-debug APKs.
+
+**Backend deploy order + gotchas:**
+
+1. `firebase deploy --only firestore:rules,firestore:indexes` — clean. Created the (default) Firestore database on first deploy.
+2. `firebase deploy --only storage` — needed Firebase Storage to be initialised in the Console first (`gs://dutch-lanka-dev.firebasestorage.app` bucket — note the new `firebasestorage.app` suffix, not the legacy `appspot.com`). Once the bucket existed, the storage rules deployed cleanly.
+3. `firebase deploy --only functions` — three sequential blockers, each fixable from the error message:
+   - **Secret Manager API not enabled.** Click-enable in Console → wait 30s → retry.
+   - **IAM service-agent bindings missing.** The CLI prints three `gcloud projects add-iam-policy-binding` commands — run them as project owner. Bound `iam.serviceAccountTokenCreator` to the Pub/Sub agent and `run.invoker` + `eventarc.eventReceiver` to the compute service account.
+   - **Eventarc service agent permissions still propagating** on first 2nd-gen function deploy. Three of five functions (`createOrder`, `payhereNotify`, `setManagerRole` — the HTTP/callable ones) deployed first try; the two Firestore-trigger functions (`onOrderCreate`, `onOrderStatusChange`) failed with "Permission denied while using the Eventarc Service Agent" and the CLI's own "Retry the deployment in a few minutes" hint. After ~3 min, `firebase deploy --only functions:onOrderCreate,functions:onOrderStatusChange` succeeded.
+4. `PAYHERE_MERCHANT_SECRET` set via `firebase functions:secrets:set` — currently a placeholder string. Replace with the real PayHere sandbox secret before testing the full payment flow.
+
+**Console-side toggles (manual):**
+
+- Firebase Storage initialised (one-click in Console).
+- Email/Password sign-in provider enabled (Authentication → Sign-in method). Without this, admin-created users can't sign in via password — the seeded users would be unreachable.
+- Blaze plan confirmed (required for Cloud Functions outbound HTTP, free tier covers demo traffic).
+
+**Seeding the deployed project:**
+
+The existing `tools/seed.ts` had a hard guard refusing to run without `FIRESTORE_EMULATOR_HOST` + `FIREBASE_AUTH_EMULATOR_HOST`. Extended with an explicit opt-in:
+
+- `ALLOW_DEPLOYED_SEED=1` overrides the guard
+- `GOOGLE_APPLICATION_CREDENTIALS` must point at a service-account key, otherwise the script refuses to run anonymously against a real project
+- Logs `[seed] target: DEPLOYED project=...` on startup so misuse is visible
+
+Ran with a temporary service-account key (deleted immediately after). Result: 10 products + 2 users (`customer@dutchlanka.test`, `manager@dutchlanka.test`, both `password123`) in deployed Firestore + Auth, identical to the emulator seed.
+
+**Phone install:**
+
+- `flutter clean && flutter build apk --flavor dev -t lib/main_dev.dart --debug` for both apps
+- `adb -d install -r build/app/outputs/flutter-apk/app-dev-debug.apk` to install onto the connected Pixel 9 (USB debugging on)
+- **No `--dart-define=USE_EMULATOR=true`** — that's the whole point. Without the flag, `connectToEmulators()` returns early and the SDK talks to deployed Firebase. Apps now work standalone with the cable unplugged.
+
+**What works phone-side:**
+
+- Sign-in with seeded credentials
+- Browse products (deployed Firestore listener)
+- Add to cart, navigate to checkout
+- Manager dashboard, products list, all the live-Firestore views
+
+**What doesn't (known + intentional):**
+
+- **Maps**: still grey (key deferred per user decision; map widgets accept taps but tile fetch fails). See `docs/demo_checklist.md` → "Wiring Maps later".
+- **PayHere checkout**: opens the sandbox sheet but signature verification fails because `PAYHERE_MERCHANT_SECRET` is a placeholder, not the real sandbox secret. Stop at "processing payment" or skip.
+- **Push notifications on iOS**: APNs key not uploaded yet. Android pushes should work because FCM tokens are real.
+
+**Decisions:**
+
+- **Kept the seeder bypass in source** rather than a one-off untracked script. The opt-in is explicit (env-var + credentials check) and documents itself via the startup log. Easier to use again than to re-write.
+- **Deleted the service-account key immediately** after seeding rather than rotating later. The key was named `delete-after.json` to make intent obvious. User confirmed they had a backup elsewhere.
+- **Didn't enable App Check enforcement** in the Console. Doing so right now would block the AVD's debug-token-less requests and complicate sign-in. Defer to demo day.
+
+**Known issues:**
+
+- `tools/seed.ts` change is uncommitted — small enough to land as `feat(tools): allow deployed-project seeding behind explicit opt-in` whenever convenient.
+- `functions/.env.dutch-lanka-dev` still has `PAYHERE_NOTIFY_URL=http://localhost:5001/...` from the emulator phase. For deployed checkout the value should be `https://asia-south1-dutch-lanka-dev.cloudfunctions.net/payhereNotify` — not blocking right now since real payment isn't being tested.
+- `service-575727588900@gcp-sa-eventarc.iam.gserviceaccount.com` may need the `roles/eventarc.serviceAgent` role on future deploys if Firestore triggers grow. Wasn't strictly needed this time (the wait fixed it), but the runbook should note it.
+
+---
 
 ### Step 12.2 — Manager-app emulator wiring + cleartext config (2026-05-09)
 
