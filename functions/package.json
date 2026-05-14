@@ -12,7 +12,7 @@
     "test": "jest test/payhere.test.ts",
     "test:rules": "firebase emulators:exec --only firestore 'jest test/rules.test.ts'",
     "test:functions": "firebase emulators:exec --only firestore 'jest --runInBand test/createOrder.test.ts test/payhereNotify.test.ts test/onOrderCreate.test.ts test/payhere.test.ts test/setManagerRole.test.ts'",
-    "seed": "FIRESTORE_EMULATOR_HOST=localhost:8080 FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 GCLOUD_PROJECT=${GCLOUD_PROJECT:-dutch-lanka-dev} NODE_PATH=$(pwd)/node_modules tsx ../tools/seed.ts"
+    "seed": "FIRESTORE_EMULATOR_HOST=localhost:8080 FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 FIREBASE_STORAGE_EMULATOR_HOST=localhost:9199 GCLOUD_PROJECT=${GCLOUD_PROJECT:-dutch-lanka-dev} NODE_PATH=$(pwd)/node_modules node_modules/.bin/tsx ../tools/seed.ts"
   },
   "engines": {
     "node": "20"

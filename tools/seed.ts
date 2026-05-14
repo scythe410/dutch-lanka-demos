@@ -1,10 +1,15 @@
 /**
- * Seeds the Firestore + Auth emulators with sample data.
+ * Seeds the Firestore + Auth emulators with real Dutch Lanka menu data from
+ * scraper/menu.json. Also uploads product images to Firebase Storage if
+ * scraper/images/ is present alongside this script.
  *
  * Usage (from /functions): `npm run seed`
- * Or directly: `FIRESTORE_EMULATOR_HOST=localhost:8080
- *               FIREBASE_AUTH_EMULATOR_HOST=localhost:9099
- *               tsx tools/seed.ts`
+ * Or directly:
+ *   FIRESTORE_EMULATOR_HOST=localhost:8080 \
+ *   FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 \
+ *   FIREBASE_STORAGE_EMULATOR_HOST=localhost:9199 \
+ *   GCLOUD_PROJECT=dutch-lanka-dev \
+ *   tsx ../tools/seed.ts
  *
  * Refuses to run unless the emulator env vars are set — never run this
  * against a real project unless you explicitly opt in by setting
@@ -13,6 +18,8 @@
  */
 
 import * as admin from 'firebase-admin';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const usingEmulator =
   !!process.env.FIRESTORE_EMULATOR_HOST && !!process.env.FIREBASE_AUTH_EMULATOR_HOST;
@@ -37,118 +44,124 @@ if (allowDeployedSeed && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
   process.exit(1);
 }
 
-admin.initializeApp({projectId: process.env.GCLOUD_PROJECT ?? 'dutch-lanka-dev'});
+const projectId = process.env.GCLOUD_PROJECT ?? 'dutch-lanka-dev';
+const storageBucket = process.env.STORAGE_BUCKET ?? `${projectId}.firebasestorage.app`;
+
+admin.initializeApp({projectId, storageBucket});
 
 console.log(
   `[seed] target: ${usingEmulator ? 'EMULATOR' : 'DEPLOYED'} ` +
-    `project=${process.env.GCLOUD_PROJECT ?? 'dutch-lanka-dev'}`
+    `project=${projectId}`
 );
+
 const db = admin.firestore();
 const auth = admin.auth();
+const bucket = admin.storage().bucket();
 
-// All money in LKR cents (CLAUDE.md). 35000 = LKR 350.00.
-type SeedProduct = {
+// ---------------------------------------------------------------------------
+// Menu data
+// ---------------------------------------------------------------------------
+
+interface RawMenuItem {
+  name: string;
+  description: string | null;
+  price: number;
+  imageUrl: string;
+}
+
+interface SeedProduct {
   id: string;
   name: string;
   description: string;
-  category: 'bread' | 'pastry' | 'cake';
+  category: string;
   priceCents: number;
   stock: number;
   lowStockThreshold: number;
+  imagePath: string;
+}
+
+function slugFromImageUrl(imageUrl: string): string {
+  return path.basename(imageUrl, path.extname(imageUrl));
+}
+
+function normalizeCategory(raw: string): string {
+  return raw
+    .replace(/ \(One Portion\)/g, '')
+    .replace(/Mangolian/g, 'Mongolian')
+    .trim();
+}
+
+const menuPath = path.join(__dirname, '../scraper/menu.json');
+const menuData = JSON.parse(fs.readFileSync(menuPath, 'utf-8')) as {
+  categories: Array<{name: string; items: RawMenuItem[]}>;
 };
 
-const products: SeedProduct[] = [
-  {
-    id: 'milk-bread-loaf',
-    name: 'Milk Bread Loaf',
-    description: 'Soft, slightly sweet white loaf — bakery staple.',
-    category: 'bread',
-    priceCents: 28000,
-    stock: 30,
-    lowStockThreshold: 5,
-  },
-  {
-    id: 'kimbula-banis',
-    name: 'Kimbula Banis',
-    description: 'Crocodile-shaped sweet bun, sugar-glazed top.',
-    category: 'bread',
-    priceCents: 8000,
-    stock: 60,
-    lowStockThreshold: 10,
-  },
-  {
-    id: 'seeni-sambol-bun',
-    name: 'Seeni Sambol Bun',
-    description: 'Soft bun stuffed with caramelised onion seeni sambol.',
-    category: 'bread',
-    priceCents: 12000,
-    stock: 40,
-    lowStockThreshold: 8,
-  },
-  {
-    id: 'butter-croissant',
-    name: 'Butter Croissant',
-    description: 'Laminated, all-butter, baked fresh each morning.',
-    category: 'pastry',
-    priceCents: 35000,
-    stock: 25,
-    lowStockThreshold: 5,
-  },
-  {
-    id: 'fish-bun',
-    name: 'Fish Bun',
-    description: 'Spiced tuna and potato wrapped in soft bread.',
-    category: 'pastry',
-    priceCents: 18000,
-    stock: 50,
-    lowStockThreshold: 10,
-  },
-  {
-    id: 'chocolate-eclair',
-    name: 'Chocolate Eclair',
-    description: 'Choux pastry, vanilla cream, dark chocolate glaze.',
-    category: 'pastry',
-    priceCents: 32000,
-    stock: 20,
-    lowStockThreshold: 4,
-  },
-  {
-    id: 'butter-cake-slice',
-    name: 'Butter Cake (slice)',
-    description: 'Dense, moist butter cake — a Sri Lankan tea-time classic.',
-    category: 'cake',
-    priceCents: 22000,
-    stock: 35,
-    lowStockThreshold: 6,
-  },
-  {
-    id: 'chocolate-fudge-cake',
-    name: 'Chocolate Fudge Cake (slice)',
-    description: 'Three layers of chocolate sponge, fudge ganache.',
-    category: 'cake',
-    priceCents: 45000,
-    stock: 15,
-    lowStockThreshold: 3,
-  },
-  {
-    id: 'love-cake-slice',
-    name: 'Love Cake (slice)',
-    description: 'Cashew, semolina, rose water — a Sri Lankan wedding cake.',
-    category: 'cake',
-    priceCents: 38000,
-    stock: 10,
-    lowStockThreshold: 2,
-  },
-  {
-    id: 'birthday-cake-1lb',
-    name: 'Birthday Cake — 1 lb',
-    description: 'Vanilla sponge with buttercream. Custom message available.',
-    category: 'cake',
-    priceCents: 250000,
-    stock: 8,
-    lowStockThreshold: 2,
-  },
-];
+// Collect unique products — first occurrence per slug wins (stable dedup).
+const seenSlugs = new Set<string>();
+const products: SeedProduct[] = [];
+
+for (const cat of menuData.categories) {
+  const category = normalizeCategory(cat.name);
+  for (const item of cat.items) {
+    const slug = slugFromImageUrl(item.imageUrl);
+    if (seenSlugs.has(slug)) continue;
+    seenSlugs.add(slug);
+    products.push({
+      id: slug,
+      name: item.name,
+      description: item.description ?? '',
+      category,
+      priceCents: Math.round(item.price * 100),
+      stock: 100,
+      lowStockThreshold: 10,
+      imagePath: `products/${slug}/main.jpg`,
+    });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Image upload
+// ---------------------------------------------------------------------------
+
+async function uploadImages(): Promise<void> {
+  const imagesDir = path.join(__dirname, '../scraper/images');
+  if (!fs.existsSync(imagesDir)) {
+    console.log('[seed] scraper/images not found — skipping image upload');
+    return;
+  }
+
+  let uploaded = 0;
+  let skipped = 0;
+  let failed = 0;
+
+  for (const product of products) {
+    const localPath = path.join(imagesDir, `${product.id}.jpeg`);
+    if (!fs.existsSync(localPath)) {
+      console.warn(`[seed] image missing: ${product.id}.jpeg`);
+      skipped++;
+      continue;
+    }
+    try {
+      await bucket.upload(localPath, {
+        destination: product.imagePath,
+        metadata: {contentType: 'image/jpeg'},
+        resumable: false,
+      });
+      uploaded++;
+    } catch (err) {
+      console.warn(`[seed] upload failed for ${product.id}.jpeg:`, (err as Error).message);
+      failed++;
+    }
+  }
+
+  console.log(
+    `[seed] images — uploaded: ${uploaded}, skipped: ${skipped}, failed: ${failed}`
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Users
+// ---------------------------------------------------------------------------
 
 async function ensureUser(opts: {
   uid: string;
@@ -186,6 +199,10 @@ async function ensureUser(opts: {
   console.log(`[seed] user ${opts.role}: ${opts.email}`);
 }
 
+// ---------------------------------------------------------------------------
+// Main
+// ---------------------------------------------------------------------------
+
 async function seed(): Promise<void> {
   console.log('[seed] writing demo users…');
   await ensureUser({
@@ -203,7 +220,11 @@ async function seed(): Promise<void> {
     role: 'manager',
   });
 
+  console.log('[seed] uploading product images…');
+  await uploadImages();
+
   console.log('[seed] writing products…');
+  // Firestore batch limit is 500 writes; ~60 items fits in one batch.
   const batch = db.batch();
   for (const p of products) {
     batch.set(db.collection('products').doc(p.id), {
@@ -214,14 +235,20 @@ async function seed(): Promise<void> {
       stock: p.stock,
       lowStockThreshold: p.lowStockThreshold,
       available: true,
-      customizable: p.id.startsWith('birthday-cake'),
-      imagePath: `products/${p.id}/main.jpg`,
+      customizable: false,
+      imagePath: p.imagePath,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
   }
   await batch.commit();
-  console.log(`[seed] wrote ${products.length} products`);
+
+  console.log(`[seed] wrote ${products.length} products across categories:`);
+  const cats = [...new Set(products.map((p) => p.category))].sort();
+  for (const cat of cats) {
+    const count = products.filter((p) => p.category === cat).length;
+    console.log(`  ${cat}: ${count}`);
+  }
   console.log('[seed] done.');
 }
 

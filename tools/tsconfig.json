@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2017",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "typeRoots": ["../functions/node_modules/@types"],
+    "paths": {
+      "firebase-admin": ["../functions/node_modules/firebase-admin"],
+      "firebase-admin/*": ["../functions/node_modules/firebase-admin/*"]
+    },
+    "baseUrl": "."
+  },
+  "include": ["."]
+}

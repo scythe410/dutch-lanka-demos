@@ -15,7 +15,8 @@ When you finish a step, add a new subsection under "Step log" and update "Curren
 - **Earlier in this session — Step 12** — final demo hardening. App Check (debug provider in dev, Play Integrity / DeviceCheck in prod) wired into both apps via a shared `firebase/bootstrap.dart`. Crashlytics + Performance Monitoring added: Gradle plugins (`com.google.firebase.crashlytics` 3.0.2, `com.google.firebase.firebase-perf` 1.4.2) registered on both apps, `FlutterError.onError` + `PlatformDispatcher.instance.onError` + `runZonedGuarded` route framework / async / zoned errors into `FirebaseCrashlytics.recordError`, collection disabled in `kDebugMode`. Global error boundary lives in `packages/shared/lib/widgets/error_boundary.dart` — installs a `FlutterError.onError` that forwards to a reporter callback (Crashlytics) and swaps `ErrorWidget.builder` for a friendly Soft-Cream "Something went wrong / Try again" screen in release. Stray `debugPrint` calls in `services/` and `firebase/emulator.dart` replaced by a shared `appLogger` (`logger` package, exported from `dutch_lanka_shared`). Theme audit fixed four hardcoded radii (page indicator dot, cart-badge pill, two drag handles, chart legend swatch) by extending `AppRadius` with `dragHandle/indicator/chip/badge`, and centralised the soft-shadow tint as `AppColors.shadow`. Launcher icons + native splash configured via `flutter_launcher_icons` (adaptive Android, iOS-safe alpha removal, Soft-Cream background) and `flutter_native_splash` (Warm-Orange colour-only, Android 12 spec covered) — branding source lives at `apps/<app>/assets/branding/app_icon.png` (currently the Flutter placeholder pending the real wordmark; README in each branding dir documents the swap-and-regenerate flow). New `docs/runbook.md` covers prod deploy with a manual approval gate, manager provisioning, the dev seeder, function rollback (full + targeted), and a log-locations table (Crashlytics / Performance / Functions logs / Logs Explorer / App Check denials / PayHere webhook).
 - **Verification 2026-05-08 (Step 12):** `flutter analyze` clean across customer/manager/shared. `flutter test` — customer 10/10, shared 25/25, manager 20/20. `npm run lint` + `npm run build` (functions) clean. `npm run test:functions` — 35/35.
 - **What still needs a real device / Firebase Console:** App Check enforcement is enabled in code but must be **toggled on per-product** in the Firebase Console (App Check → APIs → enable enforcement on Firestore, Storage, Cloud Functions). Crashlytics test crash and Performance dashboards only become real after one prod-flavour build runs on a physical device — the runbook §6 walks through the verification.
-- **Next:** real Maps API key wiring + manual device smoke on both apps; the rest of the Step 11 "Next" list (`onUserCreate` Cloud Function so customers don't need the relaxed self-create rule, address picker on the customer checkout screen).
+- **Seed data updated (2026-05-15):** `tools/seed.ts` rewritten to pull real Dutch Lanka menu from `scraper/menu.json` (59 unique products, 16 categories) instead of the 10 fake bakery items. Images in `scraper/images/` are uploaded to Firebase Storage at `products/{slug}/main.jpg` during seeding. `npm run seed` now also sets `FIREBASE_STORAGE_EMULATOR_HOST=localhost:9199`. Added `tools/tsconfig.json` so the IDE resolves types from `functions/node_modules`. See Step log for category list.
+- **Next:** real Maps API key wiring + manual device smoke on both apps; the rest of the Step 11 "Next" list (`onUserCreate` Cloud Function so customers don't need the relaxed self-create rule, address picker on the customer checkout screen). Re-seed the deployed `dutch-lanka-dev` project with `ALLOW_DEPLOYED_SEED=1` to replace the old bakery data.
 
 ---
 
@@ -39,6 +40,25 @@ For a non-emulator dev project, replace step 3 with a one-shot admin script (or 
 ---
 
 ## Step log
+
+### Seed data — real Dutch Lanka menu (2026-05-15)
+
+**What changed:**
+- `tools/seed.ts` rewritten: reads `scraper/menu.json` (scraped from the real Dutch Lanka Galle Uber Eats page), deduplicates 61 raw entries to 59 unique products by image slug (first occurrence wins), normalises category names (strips " (One Portion)", fixes "Mangolian" → "Mongolian"), converts LKR float prices to integer LKR cents.
+- Images uploaded to Firebase Storage at `products/{slug}/main.jpg` during seeding; graceful skip if `scraper/images/` is missing.
+- `functions/package.json` `seed` script gains `FIREBASE_STORAGE_EMULATOR_HOST=localhost:9199`.
+- Added `tools/tsconfig.json` pointing `typeRoots` at `functions/node_modules/@types` so the IDE resolves Node + firebase-admin types.
+
+**Categories (16 total, 59 items):**
+- Basmati Nasi Goreng: 3 · Basmati Rice: 7 · Cheese Kottu: 4 · Chicken: 1 · Chop Suey: 4 · Chop Suey Basmati Rice: 4 · Curries: 1 · Devilled: 3 · Fresh Eggs pack: 1 · Hoppers: 2 · Keeri Samba Rice: 7 · Kottu: 7 · Mongolian Basmati Rice: 4 · Noodles: 7 · Paratha: 1 · Soups: 3
+
+**Decisions:**
+- `category` field stays `String` — no enum; manager can rename categories later without a model change.
+- Stock seeded to 100 / threshold 10 for all items — restaurant makes to order, stock management is a future concern.
+- "Cheese Chicken Pasta" stays in "Cheese Kottu" (first-wins dedup); "Devilled Chicken" stays in "Devilled" — both acceptable, manager can reclassify.
+
+**TODO:**
+- Re-seed deployed `dutch-lanka-dev`: `ALLOW_DEPLOYED_SEED=1 GOOGLE_APPLICATION_CREDENTIALS=... npm run seed` from `functions/`.
 
 ### Step 13 — Deploy backend to dev + install standalone on Pixel 9 (2026-05-09)
 

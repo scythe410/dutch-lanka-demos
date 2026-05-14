@@ -1,0 +1,547 @@
+{
+  "restaurant": {
+    "name": "Dutch Lanka Restaurant - Galle",
+    "cuisines": [
+      "Kottu",
+      "Biryani",
+      "Pasta",
+      "Rice Dishes"
+    ],
+    "rating": 4.6,
+    "reviewCount": 1500,
+    "phone": "+94774580071",
+    "location": {
+      "latitude": 6.0554305,
+      "longitude": 80.2139248
+    },
+    "restaurantImages": [
+      "https://tb-static.uber.com/prod/image-proc/processed_images/7c1f1b48393e7a2ed4d205ffa2ce926b/e39556ef1e4c4565bc6c7dbd8b90869c.jpeg",
+      "https://tb-static.uber.com/prod/image-proc/processed_images/7c1f1b48393e7a2ed4d205ffa2ce926b/7915c4a78a9f94ed56316c7c4dc0ec89.jpeg",
+      "https://tb-static.uber.com/prod/image-proc/processed_images/7c1f1b48393e7a2ed4d205ffa2ce926b/67b1ce06a25a64dc4a71581bb39c36c6.jpeg",
+      "https://tb-static.uber.com/prod/image-proc/processed_images/7c1f1b48393e7a2ed4d205ffa2ce926b/f3376a06b92224efbe50167fb7cb61e4.jpeg",
+      "https://tb-static.uber.com/prod/image-proc/processed_images/7c1f1b48393e7a2ed4d205ffa2ce926b/50446f64f31cbefe66558fc47f50a9d6.jpeg",
+      "https://tb-static.uber.com/prod/image-proc/processed_images/7c1f1b48393e7a2ed4d205ffa2ce926b/c9252e6c6cd289c588c3381bc77b1dfc.jpeg"
+    ]
+  },
+  "categories": [
+    {
+      "name": "Keeri Samba Rice",
+      "items": [
+        {
+          "name": "Chicken Keeri Samba Rice",
+          "description": null,
+          "price": 1186.67,
+          "currency": "LKR",
+          "imageUrl": "images/chicken-keeri-samba-rice.jpeg"
+        },
+        {
+          "name": "Egg and Vegetable Keeri Samba Rice",
+          "description": null,
+          "price": 920.0,
+          "currency": "LKR",
+          "imageUrl": "images/egg-and-vegetable-keeri-samba-rice.jpeg"
+        },
+        {
+          "name": "Veggie Keeri Samba Rice",
+          "description": null,
+          "price": 840.0,
+          "currency": "LKR",
+          "imageUrl": "images/veggie-keeri-samba-rice.jpeg"
+        },
+        {
+          "name": "Seafood Keeri Samba Rice",
+          "description": null,
+          "price": 1840.0,
+          "currency": "LKR",
+          "imageUrl": "images/seafood-keeri-samba-rice.jpeg"
+        },
+        {
+          "name": "Mix Keeri Samba Rice",
+          "description": null,
+          "price": 1973.33,
+          "currency": "LKR",
+          "imageUrl": "images/mix-keeri-samba-rice.jpeg"
+        },
+        {
+          "name": "Fish Keeri Samba Rice",
+          "description": null,
+          "price": 1240.0,
+          "currency": "LKR",
+          "imageUrl": "images/fish-keeri-samba-rice.jpeg"
+        },
+        {
+          "name": "Prawn Keeri Samba Rice",
+          "description": null,
+          "price": 1306.67,
+          "currency": "LKR",
+          "imageUrl": "images/prawn-keeri-samba-rice.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Kottu",
+      "items": [
+        {
+          "name": "Chicken Kottu",
+          "description": null,
+          "price": 1186.67,
+          "currency": "LKR",
+          "imageUrl": "images/chicken-kottu.jpeg"
+        },
+        {
+          "name": "Dutch Special Mix Kottu",
+          "description": "Full, One Portion and free plan omelette.",
+          "price": 2333.33,
+          "currency": "LKR",
+          "imageUrl": "images/dutch-special-mix-kottu.jpeg"
+        },
+        {
+          "name": "Egg Kottu",
+          "description": null,
+          "price": 773.33,
+          "currency": "LKR",
+          "imageUrl": "images/egg-kottu.jpeg"
+        },
+        {
+          "name": "Fish Kottu",
+          "description": null,
+          "price": 933.33,
+          "currency": "LKR",
+          "imageUrl": "images/fish-kottu.jpeg"
+        },
+        {
+          "name": "Veggie Kottu",
+          "description": null,
+          "price": 773.33,
+          "currency": "LKR",
+          "imageUrl": "images/veggie-kottu.jpeg"
+        },
+        {
+          "name": "Prawns Kottu",
+          "description": null,
+          "price": 1133.33,
+          "currency": "LKR",
+          "imageUrl": "images/prawns-kottu.jpeg"
+        },
+        {
+          "name": "Seafood Kottu",
+          "description": null,
+          "price": 1266.67,
+          "currency": "LKR",
+          "imageUrl": "images/seafood-kottu.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Cheese Kottu",
+      "items": [
+        {
+          "name": "Chicken Cheese Kottu",
+          "description": null,
+          "price": 1466.67,
+          "currency": "LKR",
+          "imageUrl": "images/chicken-cheese-kottu.jpeg"
+        },
+        {
+          "name": "Egg Cheese Kottu",
+          "description": null,
+          "price": 1333.33,
+          "currency": "LKR",
+          "imageUrl": "images/egg-cheese-kottu.jpeg"
+        },
+        {
+          "name": "Veg Cheese Kottu",
+          "description": null,
+          "price": 1106.67,
+          "currency": "LKR",
+          "imageUrl": "images/veg-cheese-kottu.jpeg"
+        },
+        {
+          "name": "Cheese Chicken Pasta",
+          "description": null,
+          "price": 2054.0,
+          "currency": "LKR",
+          "imageUrl": "images/cheese-chicken-pasta.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Soups",
+      "items": [
+        {
+          "name": "Cream of Chicken Soup",
+          "description": null,
+          "price": 933.33,
+          "currency": "LKR",
+          "imageUrl": "images/cream-of-chicken-soup.jpeg"
+        },
+        {
+          "name": "Vegetable Soup",
+          "description": null,
+          "price": 666.67,
+          "currency": "LKR",
+          "imageUrl": "images/vegetable-soup.jpeg"
+        },
+        {
+          "name": "Chicken Noodles Soup",
+          "description": null,
+          "price": 1066.67,
+          "currency": "LKR",
+          "imageUrl": "images/chicken-noodles-soup.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Noodles (One Portion)",
+      "items": [
+        {
+          "name": "Chicken Noodles",
+          "description": "Large. Spicy.",
+          "price": 2266.67,
+          "currency": "LKR",
+          "imageUrl": "images/chicken-noodles.jpeg"
+        },
+        {
+          "name": "Mix Noodles",
+          "description": "Large. Spicy.",
+          "price": 3133.33,
+          "currency": "LKR",
+          "imageUrl": "images/mix-noodles.jpeg"
+        },
+        {
+          "name": "Egg Noodles",
+          "description": "Large. Spicy.",
+          "price": 1600.0,
+          "currency": "LKR",
+          "imageUrl": "images/egg-noodles.jpeg"
+        },
+        {
+          "name": "Vegetable Noodles",
+          "description": "Large. Spicy.",
+          "price": 1453.33,
+          "currency": "LKR",
+          "imageUrl": "images/vegetable-noodles.jpeg"
+        },
+        {
+          "name": "Fish Noodles",
+          "description": "Large. Spicy.",
+          "price": 2293.33,
+          "currency": "LKR",
+          "imageUrl": "images/fish-noodles.jpeg"
+        },
+        {
+          "name": "Seafood Noodles",
+          "description": "Large. Spicy.",
+          "price": 2733.33,
+          "currency": "LKR",
+          "imageUrl": "images/seafood-noodles.jpeg"
+        },
+        {
+          "name": "Dutch Lanka Special Mix Noodles",
+          "description": "Full, free fried egg,two sausage, and salad.",
+          "price": 3133.33,
+          "currency": "LKR",
+          "imageUrl": "images/dutch-lanka-special-mix-noodles.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Devilled",
+      "items": [
+        {
+          "name": "Devilled Chicken",
+          "description": "Full.",
+          "price": 2333.33,
+          "currency": "LKR",
+          "imageUrl": "images/devilled-chicken.jpeg"
+        },
+        {
+          "name": "Devilled Fish",
+          "description": "Full.",
+          "price": 2200.0,
+          "currency": "LKR",
+          "imageUrl": "images/devilled-fish.jpeg"
+        },
+        {
+          "name": "Devilled Prawns",
+          "description": "Full.",
+          "price": 2533.33,
+          "currency": "LKR",
+          "imageUrl": "images/devilled-prawns.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Chicken",
+      "items": [
+        {
+          "name": "Roasted Chicken",
+          "description": null,
+          "price": 1350.0,
+          "currency": "LKR",
+          "imageUrl": "images/roasted-chicken.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Paratha",
+      "items": [
+        {
+          "name": "Paratha",
+          "description": null,
+          "price": 80.0,
+          "currency": "LKR",
+          "imageUrl": "images/paratha.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Curries",
+      "items": [
+        {
+          "name": "Chicken Curry",
+          "description": null,
+          "price": 465.0,
+          "currency": "LKR",
+          "imageUrl": "images/chicken-curry.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Hoppers",
+      "items": [
+        {
+          "name": "Plain Hoppers",
+          "description": "Full.",
+          "price": 54.0,
+          "currency": "LKR",
+          "imageUrl": "images/plain-hoppers.jpeg"
+        },
+        {
+          "name": "Egg Hoppers",
+          "description": "Full.",
+          "price": 160.0,
+          "currency": "LKR",
+          "imageUrl": "images/egg-hoppers.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Basmati Rice",
+      "items": [
+        {
+          "name": "Veggie Basmati Rice",
+          "description": null,
+          "price": 1053.33,
+          "currency": "LKR",
+          "imageUrl": "images/veggie-basmati-rice.jpeg"
+        },
+        {
+          "name": "Egg and Vegetable Basmati Rice",
+          "description": null,
+          "price": 1186.67,
+          "currency": "LKR",
+          "imageUrl": "images/egg-and-vegetable-basmati-rice.jpeg"
+        },
+        {
+          "name": "Chicken Basmati Rice",
+          "description": null,
+          "price": 1573.33,
+          "currency": "LKR",
+          "imageUrl": "images/chicken-basmati-rice.jpeg"
+        },
+        {
+          "name": "Fish Basmati Rice",
+          "description": null,
+          "price": 1586.67,
+          "currency": "LKR",
+          "imageUrl": "images/fish-basmati-rice.jpeg"
+        },
+        {
+          "name": "Prawn Basmati Rice",
+          "description": null,
+          "price": 1680.0,
+          "currency": "LKR",
+          "imageUrl": "images/prawn-basmati-rice.jpeg"
+        },
+        {
+          "name": "Seafood Basmati Rice",
+          "description": null,
+          "price": 2106.67,
+          "currency": "LKR",
+          "imageUrl": "images/seafood-basmati-rice.jpeg"
+        },
+        {
+          "name": "Mix Basmati Rice",
+          "description": null,
+          "price": 2253.33,
+          "currency": "LKR",
+          "imageUrl": "images/mix-basmati-rice.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Basmati Nasi Goreng",
+      "items": [
+        {
+          "name": "Chicken Nasi Goreng",
+          "description": null,
+          "price": 1853.33,
+          "currency": "LKR",
+          "imageUrl": "images/chicken-nasi-goreng.jpeg"
+        },
+        {
+          "name": "Seafood Nasi Goreng",
+          "description": null,
+          "price": 2120.0,
+          "currency": "LKR",
+          "imageUrl": "images/seafood-nasi-goreng.jpeg"
+        },
+        {
+          "name": "Mixed Nasi Goreng",
+          "description": null,
+          "price": 2386.67,
+          "currency": "LKR",
+          "imageUrl": "images/mixed-nasi-goreng.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Mangolian Basmati Rice",
+      "items": [
+        {
+          "name": "Mangolian Chicken Basmati Rice",
+          "description": null,
+          "price": 2053.33,
+          "currency": "LKR",
+          "imageUrl": "images/mangolian-chicken-basmati-rice.jpeg"
+        },
+        {
+          "name": "Mangolian Seafood Basmati Rice",
+          "description": null,
+          "price": 2253.33,
+          "currency": "LKR",
+          "imageUrl": "images/mangolian-seafood-basmati-rice.jpeg"
+        },
+        {
+          "name": "Mangolian Mixed Basmati Rice",
+          "description": null,
+          "price": 2520.0,
+          "currency": "LKR",
+          "imageUrl": "images/mangolian-mixed-basmati-rice.jpeg"
+        },
+        {
+          "name": "Mongolian Steamed Rice",
+          "description": "Each.",
+          "price": 746.67,
+          "currency": "LKR",
+          "imageUrl": "images/mongolian-steamed-rice.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Chop Suey (One Portion)",
+      "items": [
+        {
+          "name": "Vegetable Chop Suey",
+          "description": "Small.",
+          "price": 2120.0,
+          "currency": "LKR",
+          "imageUrl": "images/vegetable-chop-suey.jpeg"
+        },
+        {
+          "name": "Chicken Chop Suey",
+          "description": "Small.",
+          "price": 2453.33,
+          "currency": "LKR",
+          "imageUrl": "images/chicken-chop-suey.jpeg"
+        },
+        {
+          "name": "Seafood Chop Suey",
+          "description": "Small.",
+          "price": 3186.67,
+          "currency": "LKR",
+          "imageUrl": "images/seafood-chop-suey.jpeg"
+        },
+        {
+          "name": "Mixed Chop Suey",
+          "description": "Small.",
+          "price": 3586.67,
+          "currency": "LKR",
+          "imageUrl": "images/mixed-chop-suey.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Chop Suey Basmati Rice (One Portion)",
+      "items": [
+        {
+          "name": "Veggie Chop Suey Basmati Rice",
+          "description": "Full.",
+          "price": 1600.0,
+          "currency": "LKR",
+          "imageUrl": "images/veggie-chop-suey-basmati-rice.jpeg"
+        },
+        {
+          "name": "Chicken Chop Suey Basmati Rice",
+          "description": "Full.",
+          "price": 2600.0,
+          "currency": "LKR",
+          "imageUrl": "images/chicken-chop-suey-basmati-rice.jpeg"
+        },
+        {
+          "name": "Seafood Chop Suey Basmati Rice",
+          "description": "Full.",
+          "price": 3334.0,
+          "currency": "LKR",
+          "imageUrl": "images/seafood-chop-suey-basmati-rice.jpeg"
+        },
+        {
+          "name": "Mixed Chop Suey Basmati Rice",
+          "description": "Full.",
+          "price": 3734.0,
+          "currency": "LKR",
+          "imageUrl": "images/mixed-chop-suey-basmati-rice.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Fresh Eggs pack",
+      "items": [
+        {
+          "name": "Fresh farm Egg pack",
+          "description": "Gamage Agro farm fresh Egg pack.\nContains - 10 Eggs",
+          "price": 720.0,
+          "currency": "LKR",
+          "imageUrl": "images/fresh-farm-egg-pack.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Pasta",
+      "items": [
+        {
+          "name": "Cheese Chicken Pasta",
+          "description": "Small.",
+          "price": 2000.0,
+          "currency": "LKR",
+          "imageUrl": "images/cheese-chicken-pasta.jpeg"
+        }
+      ]
+    },
+    {
+      "name": "Chicken",
+      "items": [
+        {
+          "name": "Devilled Chicken",
+          "description": "Medium. Very spicy.",
+          "price": 2506.67,
+          "currency": "LKR",
+          "imageUrl": "images/devilled-chicken.jpeg"
+        }
+      ]
+    }
+  ],
+  "totalItems": 61,
+  "totalCategories": 18
+}
