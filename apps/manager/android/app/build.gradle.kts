@@ -69,6 +69,16 @@ android {
             dimension = "env"
         }
     }
+
+    // Crashlytics mapping-file upload requires a service-account key + the
+    // crashlyticsConfig setup. Skip it until that's wired (runbook §1.1 TODO).
+    // Without this opt-out, every release build fails the
+    // :app:uploadCrashlyticsMappingFileDevRelease task.
+    buildTypes.getByName("release") {
+        configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
+            mappingFileUploadEnabled = false
+        }
+    }
 }
 
 flutter {
