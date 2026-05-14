@@ -76,6 +76,11 @@ database-debug.log
 *.p12
 *.jks
 service-account*.json
+serv-key.json
+*-key.json
+*_key.json
+firebase-adminsdk*.json
+credentials.json
 
 # Firebase Functions emulator secrets — populated by `functions:secrets:set`
 # at runtime, mirrored into .secret.local for the local emulator.
