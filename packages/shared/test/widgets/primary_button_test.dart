@@ -11,8 +11,8 @@ void main() {
       wrap(PrimaryButton(label: 'Get Started', onPressed: () => taps++)),
     );
 
-    expect(find.text('Get Started'), findsOneWidget);
-    await tester.tap(find.text('Get Started'));
+    expect(find.text('GET STARTED'), findsOneWidget);
+    await tester.tap(find.text('GET STARTED'));
     await tester.pumpAndSettle();
     expect(taps, 1);
     expect(tester.takeException(), isNull);

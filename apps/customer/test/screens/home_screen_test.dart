@@ -41,8 +41,8 @@ void main() {
     );
     await tester.pump();
 
-    expect(find.text('Butter Croissant'), findsOneWidget);
-    expect(find.text('Kimbula Banis'), findsOneWidget);
+    expect(find.text('BUTTER CROISSANT'), findsOneWidget);
+    expect(find.text('KIMBULA BANIS'), findsOneWidget);
     expect(find.byTooltip('Cart'), findsOneWidget);
     expect(find.byTooltip('Profile'), findsOneWidget);
     expect(find.byTooltip('Orders'), findsOneWidget);

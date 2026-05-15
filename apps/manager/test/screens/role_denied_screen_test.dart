@@ -18,7 +18,7 @@ void main() {
     );
     await tester.pump();
     expect(find.text('Access denied'), findsOneWidget);
-    expect(find.text('Sign out'), findsOneWidget);
+    expect(find.text('SIGN OUT'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

@@ -18,7 +18,7 @@ void main() {
       ),
     );
 
-    expect(find.text("I've verified my email"), findsOneWidget);
+    expect(find.text("I'VE VERIFIED MY EMAIL"), findsOneWidget);
     expect(find.text('hello@example.com'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

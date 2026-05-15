@@ -25,9 +25,9 @@ void main() {
     );
     await tester.pump();
 
-    expect(find.text("Today's sales"), findsOneWidget);
-    expect(find.text('Active orders'), findsOneWidget);
-    expect(find.text('Low stock'), findsOneWidget);
+    expect(find.text("TODAY'S SALES · LIVE"), findsOneWidget);
+    expect(find.text('ACTIVE ORDERS'), findsOneWidget);
+    expect(find.text('LOW STOCK'), findsOneWidget);
     expect(find.text('LKR 1234'), findsOneWidget);
     expect(find.text('Incoming orders'), findsOneWidget);
     expect(find.text('No active orders right now.'), findsOneWidget);

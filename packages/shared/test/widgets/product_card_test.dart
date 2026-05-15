@@ -20,7 +20,7 @@ void main() {
       ),
     );
 
-    expect(find.text('Croissant'), findsOneWidget);
+    expect(find.text('CROISSANT'), findsOneWidget);
     expect(find.text('LKR 350'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

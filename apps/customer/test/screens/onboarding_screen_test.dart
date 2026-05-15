@@ -6,7 +6,7 @@ import '../helpers.dart';
 void main() {
   testWidgets('OnboardingScreen builds and shows Next CTA', (tester) async {
     await tester.pumpWidget(wrap(const OnboardingScreen()));
-    expect(find.text('Next'), findsOneWidget);
+    expect(find.text('NEXT'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

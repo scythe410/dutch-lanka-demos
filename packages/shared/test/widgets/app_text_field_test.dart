@@ -15,7 +15,7 @@ void main() {
       )),
     );
 
-    expect(find.text('Email'), findsOneWidget);
+    expect(find.text('EMAIL'), findsOneWidget);
     await tester.enterText(find.byType(TextField), 'a@b.co');
     expect(controller.text, 'a@b.co');
     expect(tester.takeException(), isNull);

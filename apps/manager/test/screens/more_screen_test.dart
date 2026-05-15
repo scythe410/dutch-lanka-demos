@@ -21,7 +21,7 @@ void main() {
     expect(find.text('Complaints'), findsOneWidget);
     expect(find.text('Staff'), findsOneWidget);
     expect(find.text('Reports'), findsOneWidget);
-    expect(find.text('Sign out'), findsOneWidget);
+    expect(find.text('SIGN OUT'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

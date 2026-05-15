@@ -18,9 +18,9 @@ void main() {
     );
     await tester.pump();
 
-    expect(find.text('Sign in'), findsOneWidget);
-    expect(find.text('Email'), findsOneWidget);
-    expect(find.text('Password'), findsOneWidget);
+    expect(find.text('SIGN IN'), findsOneWidget);
+    expect(find.text('EMAIL'), findsOneWidget);
+    expect(find.text('PASSWORD'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

@@ -7,7 +7,7 @@ void main() {
   testWidgets('ForgotPasswordScreen builds and shows Send reset link CTA',
       (tester) async {
     await tester.pumpWidget(wrap(const ForgotPasswordScreen()));
-    expect(find.text('Send reset link'), findsOneWidget);
+    expect(find.text('SEND RESET LINK'), findsOneWidget);
     expect(find.text('Back to log in'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

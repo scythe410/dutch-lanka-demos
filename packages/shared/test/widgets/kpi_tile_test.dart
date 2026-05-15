@@ -10,7 +10,7 @@ void main() {
       wrap(const KpiTile(label: "Today's sales", value: 'LKR 24,500')),
     );
 
-    expect(find.text("Today's sales"), findsOneWidget);
+    expect(find.text("TODAY'S SALES"), findsOneWidget);
     expect(find.text('LKR 24,500'), findsOneWidget);
     expect(find.byIcon(Icons.chevron_right), findsNothing);
   });

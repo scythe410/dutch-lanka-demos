@@ -51,7 +51,7 @@ void main() {
     expect(find.text('Delivery address'), findsOneWidget);
     expect(find.text('Status'), findsOneWidget);
     expect(find.text('Assign delivery'), findsOneWidget);
-    expect(find.text('Mark as Preparing'), findsOneWidget);
+    expect(find.text('MARK AS PREPARING'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

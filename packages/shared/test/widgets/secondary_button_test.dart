@@ -10,8 +10,8 @@ void main() {
       wrap(SecondaryButton(label: 'Add to cart', onPressed: () => taps++)),
     );
 
-    expect(find.text('Add to cart'), findsOneWidget);
-    await tester.tap(find.text('Add to cart'));
+    expect(find.text('ADD TO CART'), findsOneWidget);
+    await tester.tap(find.text('ADD TO CART'));
     await tester.pumpAndSettle();
     expect(taps, 1);
     expect(tester.takeException(), isNull);
