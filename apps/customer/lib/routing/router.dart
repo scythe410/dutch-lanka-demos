@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import '../providers/auth_provider.dart';
 import '../screens/about_screen.dart';
+import '../screens/splash_screen.dart';
 import '../screens/addresses_screen.dart';
 import '../screens/cart_screen.dart';
 import '../screens/change_password_screen.dart';
@@ -53,11 +54,15 @@ const _publicRoutes = {
 final routerProvider = Provider<GoRouter>((ref) {
   final auth = ref.watch(firebaseAuthProvider);
   return GoRouter(
-    initialLocation: '/onboarding',
+    initialLocation: '/splash',
     refreshListenable: GoRouterRefreshStream(auth.authStateChanges()),
     redirect: (context, state) {
       final user = auth.currentUser;
       final loc = state.matchedLocation;
+
+      // Let the splash play through without interruption.
+      if (loc == '/splash') return null;
+
       final isPublic = _publicRoutes.contains(loc);
 
       if (user == null) {
@@ -70,6 +75,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
       GoRoute(
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),

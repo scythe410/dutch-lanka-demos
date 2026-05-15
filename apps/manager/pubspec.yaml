@@ -96,12 +96,12 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/branding/app_icon.png"
+  image_path: "assets/branding/dutch-logo-on-black.png"
   min_sdk_android: 21
   remove_alpha_ios: true
-  background_color_ios: "#FAF3E1"
-  adaptive_icon_background: "#FAF3E1"
-  adaptive_icon_foreground: "assets/branding/app_icon.png"
+  background_color_ios: "#000000"
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/branding/dutch-logo-on-black.png"
 
 flutter_native_splash:
   color: "#FFA951"
