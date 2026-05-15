@@ -5,6 +5,7 @@ export 'theme/text_theme.dart';
 export 'theme/app_theme.dart';
 
 export 'widgets/scalloped_clipper.dart';
+export 'widgets/serrated_edge.dart';
 export 'widgets/two_tone_title.dart';
 export 'widgets/primary_button.dart';
 export 'widgets/secondary_button.dart';

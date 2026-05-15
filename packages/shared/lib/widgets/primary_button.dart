@@ -6,9 +6,9 @@ import '../theme/spacing.dart';
 import '../theme/text_theme.dart';
 import '_press_scale.dart';
 
-/// Dominant CTA — orange pill, white label. design.md §8 spec:
-/// height 56, radius 28, h-padding 24, optional 20px leading icon, 8px gap,
-/// disabled = 40% opacity, tap scale 0.97 over 100ms.
+/// Primary CTA — electric-yellow pill, dark label, uppercase Sora.
+/// Height 56, radius 28, h-padding 24, optional leading icon (20px), 8px gap.
+/// Disabled = 40 % opacity. Tap scale 0.97 over 120ms.
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
     super.key,
@@ -25,20 +25,17 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final enabled = onPressed != null;
-    final body = _ButtonBody(
-      label: label,
-      icon: icon,
-      background: AppColors.primary,
-      foreground: AppColors.onPrimary,
-      fullWidth: fullWidth,
-    );
-
     return Opacity(
-      opacity: enabled ? 1.0 : 0.4,
+      opacity: onPressed != null ? 1.0 : 0.4,
       child: PressScale(
         onTap: onPressed,
-        child: body,
+        child: _ButtonBody(
+          label: label,
+          icon: icon,
+          background: AppColors.primary,
+          foreground: AppColors.onPrimary,
+          fullWidth: fullWidth,
+        ),
       ),
     );
   }
@@ -61,21 +58,6 @@ class _ButtonBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final content = Row(
-      mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (icon != null) ...[
-          Icon(icon, size: 20, color: foreground),
-          const SizedBox(width: Space.sm),
-        ],
-        Text(
-          label,
-          style: appTextTheme.labelLarge?.copyWith(color: foreground),
-        ),
-      ],
-    );
-
     return Container(
       height: 56,
       width: fullWidth ? double.infinity : null,
@@ -83,14 +65,36 @@ class _ButtonBody extends StatelessWidget {
       decoration: BoxDecoration(
         color: background,
         borderRadius: BorderRadius.circular(AppRadius.buttonPill),
+        boxShadow: background == AppColors.primary
+            ? [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.35),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
+                ),
+              ]
+            : null,
       ),
       alignment: Alignment.center,
-      child: content,
+      child: Row(
+        mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 20, color: foreground),
+            const SizedBox(width: Space.sm),
+          ],
+          Text(
+            label.toUpperCase(),
+            style: appTextTheme.labelLarge?.copyWith(color: foreground),
+          ),
+        ],
+      ),
     );
   }
 }
 
-/// Internal body shape exposed so [SecondaryButton] can reuse it.
+/// Exposed so [SecondaryButton] and other callers can compose the same shape.
 class ButtonShape extends StatelessWidget {
   const ButtonShape({
     super.key,

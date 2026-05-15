@@ -6,12 +6,9 @@ import '../theme/radius.dart';
 import '../theme/spacing.dart';
 import '../theme/text_theme.dart';
 
-/// Standard form field per design.md §8 `AppTextField`.
-/// Cream fill, 1px silver resting border (so the field has visible edges
-/// when sitting on a cream background — the design doc assumes a
-/// contrasting parent surface, but most screens use cream too), 1.5px
-/// orange focused border, optional helper or error text below (silver /
-/// black — no red, per design rules).
+/// Standard form field — Midnight Kitchen dark style.
+/// Elevated surface fill, hairline resting border, yellow focused border with
+/// soft glow. Optional label above, helper/error text below.
 class AppTextField extends StatefulWidget {
   const AppTextField({
     super.key,
@@ -65,6 +62,7 @@ class _AppTextFieldState extends State<AppTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final focused = _focusNode.hasFocus;
     final hasError = widget.errorText != null;
 
     return Column(
@@ -73,52 +71,84 @@ class _AppTextFieldState extends State<AppTextField> {
       children: [
         if (widget.label != null) ...[
           Text(
-            widget.label!,
-            style: appTextTheme.titleMedium?.copyWith(color: AppColors.onSurface),
+            widget.label!.toUpperCase(),
+            style: appTextTheme.labelSmall
+                ?.copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: Space.sm),
         ],
-        TextField(
-          controller: widget.controller,
-          focusNode: _focusNode,
-          obscureText: widget.obscureText,
-          keyboardType: widget.keyboardType,
-          inputFormatters: widget.inputFormatters,
-          onChanged: widget.onChanged,
-          textInputAction: widget.textInputAction,
-          autofocus: widget.autofocus,
-          enabled: widget.enabled,
-          style: appTextTheme.bodyMedium?.copyWith(color: AppColors.onSurface),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: AppColors.surface,
-            hintText: widget.hint,
-            hintStyle: appTextTheme.bodyMedium?.copyWith(
-              color: AppColors.onSurface.withValues(alpha: 0.5),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: Space.lg,
-              vertical: Space.md,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.input),
-              borderSide: const BorderSide(color: AppColors.muted, width: 1),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.input),
-              borderSide: const BorderSide(color: AppColors.muted, width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.input),
-              borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.input),
-              borderSide: const BorderSide(color: AppColors.muted, width: 1),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppRadius.input),
-              borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppRadius.input),
+            boxShadow: focused
+                ? [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.12),
+                      blurRadius: 0,
+                      spreadRadius: 4,
+                    ),
+                  ]
+                : null,
+          ),
+          child: TextField(
+            controller: widget.controller,
+            focusNode: _focusNode,
+            obscureText: widget.obscureText,
+            keyboardType: widget.keyboardType,
+            inputFormatters: widget.inputFormatters,
+            onChanged: widget.onChanged,
+            textInputAction: widget.textInputAction,
+            autofocus: widget.autofocus,
+            enabled: widget.enabled,
+            style:
+                appTextTheme.bodyMedium?.copyWith(color: AppColors.onSurface),
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: AppColors.surfaceElevated,
+              hintText: widget.hint,
+              hintStyle: appTextTheme.bodyMedium?.copyWith(
+                color: AppColors.textTertiary,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: Space.lg,
+                vertical: Space.md,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadius.input),
+                borderSide: const BorderSide(
+                  color: AppColors.lineStrong,
+                  width: 1,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadius.input),
+                borderSide: const BorderSide(
+                  color: AppColors.lineStrong,
+                  width: 1,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadius.input),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 1.5,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadius.input),
+                borderSide: const BorderSide(
+                  color: AppColors.accentRed,
+                  width: 1,
+                ),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppRadius.input),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 1.5,
+                ),
+              ),
             ),
           ),
         ),
@@ -127,7 +157,7 @@ class _AppTextFieldState extends State<AppTextField> {
           Text(
             hasError ? widget.errorText! : widget.helperText!,
             style: appTextTheme.bodySmall?.copyWith(
-              color: hasError ? AppColors.onSurface : AppColors.muted,
+              color: hasError ? AppColors.accentRed : AppColors.muted,
             ),
           ),
         ],

@@ -5,38 +5,52 @@ import '../theme/radius.dart';
 import '../theme/spacing.dart';
 import '../theme/text_theme.dart';
 
-/// Manager-app dashboard tile per design.md §8 `KpiTile`.
-/// White background, 16 radius, 16 padding.
-/// Top: caption (Caption, black 60%). Center: value (Display, orange).
-/// Bottom-right chevron-right when [onTap] is provided.
+/// Manager-app dashboard KPI tile — Midnight Kitchen dark style.
+/// Elevated surface bg, 20px radius, hairline border.
+/// Label in muted caption. Value in Sora display yellow.
+/// Tap chevron when [onTap] is provided.
 class KpiTile extends StatelessWidget {
   const KpiTile({
     super.key,
     required this.label,
     required this.value,
     this.onTap,
+    this.highlight = false,
   });
 
   final String label;
   final String value;
   final VoidCallback? onTap;
 
+  /// When true, renders a yellow gradient tile (used for the big sales number).
+  final bool highlight;
+
   @override
   Widget build(BuildContext context) {
     final tile = Container(
       padding: const EdgeInsets.all(Space.lg),
       decoration: BoxDecoration(
-        color: AppColors.onPrimary,
+        color: highlight ? null : AppColors.surfaceElevated,
+        gradient: highlight
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFFFFD60A), Color(0xFFFFB700)],
+              )
+            : null,
         borderRadius: BorderRadius.circular(AppRadius.card),
+        border: highlight ? null : Border.all(color: AppColors.line),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            label,
-            style: appTextTheme.bodySmall?.copyWith(
-              color: AppColors.onSurface.withValues(alpha: 0.6),
+            label.toUpperCase(),
+            style: appTextTheme.labelSmall?.copyWith(
+              color: highlight
+                  ? AppColors.onPrimary.withValues(alpha: 0.6)
+                  : AppColors.textSecondary,
             ),
           ),
           const SizedBox(height: Space.sm),
@@ -46,13 +60,18 @@ class KpiTile extends StatelessWidget {
               Expanded(
                 child: Text(
                   value,
-                  style: appTextTheme.displayLarge
-                      ?.copyWith(color: AppColors.primary),
+                  style: appTextTheme.displayLarge?.copyWith(
+                    fontSize: 28,
+                    color: highlight ? AppColors.onPrimary : AppColors.primary,
+                  ),
                 ),
               ),
               if (onTap != null)
-                const Icon(Icons.chevron_right,
-                    size: 20, color: AppColors.primary),
+                Icon(
+                  Icons.chevron_right,
+                  size: 20,
+                  color: highlight ? AppColors.onPrimary : AppColors.primary,
+                ),
             ],
           ),
         ],

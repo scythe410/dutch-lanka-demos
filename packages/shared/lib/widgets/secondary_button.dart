@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../theme/colors.dart';
+import '../theme/radius.dart';
+import '../theme/spacing.dart';
+import '../theme/text_theme.dart';
 import '_press_scale.dart';
-import 'primary_button.dart' show ButtonShape;
 
-/// White pill, orange label. Used inside orange contexts (e.g. "Add to cart"
-/// on the product detail panel) where a primary orange button would clash.
-/// Same dims, radius, and press animation as [PrimaryButton].
+/// Ghost pill button — transparent background, hairline border, near-white label.
+/// Used as a softer alternative to [PrimaryButton] (e.g. "Browse Full Menu").
 class SecondaryButton extends StatelessWidget {
   const SecondaryButton({
     super.key,
@@ -23,19 +24,38 @@ class SecondaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final enabled = onPressed != null;
     return Opacity(
-      opacity: enabled ? 1.0 : 0.4,
+      opacity: onPressed != null ? 1.0 : 0.4,
       child: PressScale(
         onTap: onPressed,
-        child: ButtonShape(
-          label: label,
-          icon: icon,
-          background: AppColors.onPrimary,
-          foreground: AppColors.primary,
-          fullWidth: fullWidth,
+        child: Container(
+          height: 56,
+          width: fullWidth ? double.infinity : null,
+          padding: const EdgeInsets.symmetric(horizontal: Space.xl),
+          decoration: BoxDecoration(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(AppRadius.buttonPill),
+            border: Border.all(color: AppColors.lineStrong),
+          ),
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 20, color: AppColors.onSurface),
+                const SizedBox(width: Space.sm),
+              ],
+              Text(
+                label.toUpperCase(),
+                style: appTextTheme.labelLarge
+                    ?.copyWith(color: AppColors.onSurface),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+

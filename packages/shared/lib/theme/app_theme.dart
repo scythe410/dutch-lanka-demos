@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'colors.dart';
 import 'radius.dart';
@@ -6,16 +7,16 @@ import 'spacing.dart';
 import 'text_theme.dart';
 
 ThemeData buildAppTheme() {
-  final colorScheme = const ColorScheme(
-    brightness: Brightness.light,
+  const colorScheme = ColorScheme(
+    brightness: Brightness.dark,
     primary: AppColors.primary,
     onPrimary: AppColors.onPrimary,
-    secondary: AppColors.primary,
+    secondary: AppColors.accentOrange,
     onSecondary: AppColors.onPrimary,
     surface: AppColors.surface,
     onSurface: AppColors.onSurface,
-    error: AppColors.onSurface,
-    onError: AppColors.onPrimary,
+    error: AppColors.accentRed,
+    onError: AppColors.onSurface,
     outline: AppColors.muted,
   );
 
@@ -32,7 +33,11 @@ ThemeData buildAppTheme() {
       foregroundColor: AppColors.onSurface,
       elevation: 0,
       centerTitle: false,
-      titleTextStyle: appTextTheme.headlineSmall?.copyWith(color: AppColors.onSurface),
+      surfaceTintColor: Colors.transparent,
+      systemOverlayStyle: SystemUiOverlayStyle.light,
+      titleTextStyle: appTextTheme.headlineSmall?.copyWith(
+        color: AppColors.onSurface,
+      ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -53,7 +58,10 @@ ThemeData buildAppTheme() {
       style: TextButton.styleFrom(
         foregroundColor: AppColors.primary,
         textStyle: appTextTheme.labelLarge,
-        padding: const EdgeInsets.symmetric(horizontal: Space.lg, vertical: Space.sm),
+        padding: const EdgeInsets.symmetric(
+          horizontal: Space.lg,
+          vertical: Space.sm,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.buttonPill),
         ),
@@ -61,28 +69,56 @@ ThemeData buildAppTheme() {
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: AppColors.surface,
-      contentPadding: const EdgeInsets.symmetric(horizontal: Space.lg, vertical: Space.md),
+      fillColor: AppColors.surfaceElevated,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: Space.lg,
+        vertical: Space.md,
+      ),
       hintStyle: appTextTheme.bodyMedium?.copyWith(
-        color: AppColors.onSurface.withValues(alpha: 0.5),
+        color: AppColors.textTertiary,
       ),
       helperStyle: appTextTheme.bodySmall?.copyWith(color: AppColors.muted),
-      errorStyle: appTextTheme.bodySmall?.copyWith(color: AppColors.onSurface),
+      errorStyle:
+          appTextTheme.bodySmall?.copyWith(color: AppColors.accentRed),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.input),
-        borderSide: BorderSide.none,
+        borderSide: const BorderSide(color: AppColors.lineStrong, width: 1),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.input),
-        borderSide: BorderSide.none,
+        borderSide: const BorderSide(color: AppColors.lineStrong, width: 1),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.input),
         borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
       ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadius.input),
+        borderSide: const BorderSide(color: AppColors.accentRed, width: 1),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadius.input),
+        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+      ),
     ),
-    dividerTheme: const DividerThemeData(color: AppColors.muted, thickness: 1),
-    iconTheme: const IconThemeData(color: AppColors.primary),
+    dividerTheme: const DividerThemeData(
+      color: AppColors.line,
+      thickness: 1,
+    ),
+    iconTheme: const IconThemeData(color: AppColors.onSurface),
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: AppColors.primary,
+    ),
+    chipTheme: ChipThemeData(
+      backgroundColor: AppColors.surfaceElevated,
+      selectedColor: AppColors.primary,
+      labelStyle:
+          appTextTheme.labelSmall?.copyWith(color: AppColors.onSurface),
+      side: const BorderSide(color: AppColors.lineStrong),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.buttonPill),
+      ),
+    ),
   );
 }
 
