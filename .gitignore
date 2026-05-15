@@ -95,6 +95,9 @@ coverage/
 *.lcov
 test-results/
 
+# Built APKs / IPAs for distribution
+dist/
+
 # --------------- Misc ---------------
 *.log
 .mcp.json

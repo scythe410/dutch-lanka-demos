@@ -16,7 +16,9 @@ When you finish a step, add a new subsection under "Step log" and update "Curren
 - **Verification 2026-05-08 (Step 12):** `flutter analyze` clean across customer/manager/shared. `flutter test` — customer 10/10, shared 25/25, manager 20/20. `npm run lint` + `npm run build` (functions) clean. `npm run test:functions` — 35/35.
 - **What still needs a real device / Firebase Console:** App Check enforcement is enabled in code but must be **toggled on per-product** in the Firebase Console (App Check → APIs → enable enforcement on Firestore, Storage, Cloud Functions). Crashlytics test crash and Performance dashboards only become real after one prod-flavour build runs on a physical device — the runbook §6 walks through the verification.
 - **Seed data updated (2026-05-15):** `tools/seed.ts` rewritten to pull real Dutch Lanka menu from `scraper/menu.json` (59 unique products, 16 categories) instead of the 10 fake bakery items. Images in `scraper/images/` are uploaded to Firebase Storage at `products/{slug}/main.jpg` during seeding. `npm run seed` now also sets `FIREBASE_STORAGE_EMULATOR_HOST=localhost:9199`. Added `tools/tsconfig.json` so the IDE resolves types from `functions/node_modules`. See Step log for category list.
-- **Next:** real Maps API key wiring + manual device smoke on both apps; the rest of the Step 11 "Next" list (`onUserCreate` Cloud Function so customers don't need the relaxed self-create rule, address picker on the customer checkout screen). Re-seed the deployed `dutch-lanka-dev` project with `ALLOW_DEPLOYED_SEED=1` to replace the old bakery data.
+- **Midnight Kitchen redesign applied (2026-05-15):** Full visual layer replaced with the Midnight Kitchen design system — dark matte theme (electric yellow `#FFD60A`, matte black `#0B0B0E`, elevated `#15151A`), Sora + Inter fonts, updated shared widgets (PrimaryButton, SecondaryButton, ProductCard, KpiTile, AppTextField, new SerratedEdge ornament), customer onboarding rewritten, customer home screen rewritten with hero banner + sliver layout, manager dashboard highlight tile, manager shell dark NavigationBar. All providers, routing, Firebase, and models unchanged. `flutter analyze` clean (0 issues) across all three packages after the change.
+- **v2 shipped (2026-05-15):** Widget tests updated for uppercase labels introduced by Midnight Kitchen (`.toUpperCase()` in buttons, KpiTile, AppTextField, ProductCard). `dutch-logo-on-black.png` added to branding — used as launcher icon (adaptive, black bg) on both apps and as home screen AppBar logo on customer app. Customer app gains a logo splash screen (fade-in → hold → fade-out, 2.2 s, then GoRouter redirect takes over). App display names fixed: `dutch_lanka_customer` → `Dutch Lanka`, `dutch_lanka_manager` → `Dutch Lanka Manager`. Deployed `dutch-lanka-dev` re-seeded with real 59-product menu via `ALLOW_DEPLOYED_SEED=1 GOOGLE_APPLICATION_CREDENTIALS=../serv-key.json`. Release APKs built and distributed: `dist/DutchLanka-customer.apk` (56 MB), `dist/DutchLanka-manager.apk` (55 MB). `flutter analyze` 0 issues; all tests green — customer 10/10, shared 25/25, manager 20/20. Tagged v2.0.0.
+- **Next:** real Maps API key wiring + manual device smoke-test of the new dark UI on both apps; `onUserCreate` Cloud Function; address picker on checkout screen.
 
 ---
 
@@ -40,6 +42,42 @@ For a non-emulator dev project, replace step 3 with a one-shot admin script (or 
 ---
 
 ## Step log
+
+### Midnight Kitchen UI redesign (2026-05-15)
+
+**Goal:** Replace the warm-cream Soft-Cream design system with the "Midnight Kitchen" dark aesthetic from the design prototype, while preserving all architecture, routing, providers, and Firebase integrations unchanged.
+
+**What changed — theme layer (`packages/shared`):**
+- `theme/colors.dart` — full palette swap: `primary` → `#FFD60A` (electric yellow), `onPrimary` → `#0A0A08` (near-black), `surface` → `#0B0B0E` (matte black), `onSurface` → `#F6F5F1` (near-white). Added new tokens: `surfaceElevated` (`#15151A`), `surfaceHigh`, `textSecondary`, `textTertiary`, `accentRed`, `accentOrange`, `success`, `info`, `line`, `lineStrong`, `muted`, `shadow`.
+- `theme/radius.dart` — `card` 16→20, `input` 12→16.
+- `theme/text_theme.dart` — Display/headline: `GoogleFonts.sora()` weight 800, tight tracking. Body: `GoogleFonts.inter()` weight 400-600. `labelLarge`: Sora 700, `letterSpacing: 1.4`. `labelSmall`: Inter 600, `letterSpacing: 1.6`.
+- `theme/app_theme.dart` — `brightness: Brightness.dark`, all colors wired to new tokens, `surfaceTintColor: transparent` on AppBar, added `progressIndicatorTheme`, `chipTheme`.
+
+**What changed — shared widgets:**
+- `widgets/primary_button.dart` — yellow `BoxShadow` glow, labels auto-uppercased.
+- `widgets/secondary_button.dart` — ghost style: transparent bg, `lineStrong` border, `onSurface` text, uppercased. Removed duplicate `ButtonShape` class (was causing export conflict).
+- `widgets/product_card.dart` — dark card (`surfaceElevated` bg, `line` border), product name in `primary` (yellow) uppercased. Added optional `badge` param for red ribbon chips (e.g. "HOT", "NEW"). Stars: yellow filled / `textTertiary` empty.
+- `widgets/kpi_tile.dart` — dark base (`surfaceElevated` + `line` border). `highlight: true` → yellow `LinearGradient` (#FFD60A→#FFB700) for the big sales KPI. Labels uppercased via `labelSmall`.
+- `widgets/app_text_field.dart` — `fillColor: surfaceElevated`, resting border `lineStrong`, focused border `primary` with glow, error border `accentRed`.
+- `widgets/serrated_edge.dart` — NEW. `CustomPainter` zig-zag with ~50 teeth per full width. Replaces the old cream scallop as the brand ornament. Exported from `dutch_lanka_shared.dart`.
+
+**What changed — customer app screens:**
+- `screens/onboarding_screen.dart` — dark hero area with `RadialGradient` yellow glow, `SerratedEdge` between hero and content panel, updated slide copy ("BAKED AT NIGHT. / DELIVERED HOT." etc.), `TwoToneTitle` two-part headlines, page dots use yellow/tertiary (4px height, 20px active width).
+- `screens/home_screen.dart` — full rewrite: `ListView` + `GridView` → `CustomScrollView` with slivers. Added `_HeroBanner` (dark gradient card, COMBO + NEW TONIGHT ribbons, yellow arrow CTA). `_SearchField` inline dark container with `LucideIcons.search`. `_CategoryPill` dark elevated / yellow selected. Section header "TONIGHT'S MENU." + item count label. AppBar icons `onSurface`. Cart badge `primary` bg + `onPrimary` text.
+
+**What changed — manager app:**
+- `screens/dashboard_screen.dart` — sales `KpiTile` set `highlight: true` spanning full width; orders + low-stock tiles in a 2-column row below.
+- `screens/main_shell.dart` — `NavigationBar` bg → `surfaceElevated`; inactive icon → `textTertiary`.
+
+**Decisions:**
+- Did NOT add the "Tonight's Fire" daily promo screen — it's a new route not in current GoRouter config; adding it would require a new screen + route + provider, out of scope for a visual pass.
+- `QuantityStepper` and `TwoToneTitle` needed no changes — they derive from theme tokens and naturally adapted to the new palette.
+- LSP showed hundreds of false errors ("Undefined class Color") after bulk writes — confirmed as stale analysis-server cache; `flutter analyze` returned 0 issues.
+- `AppColors.onPrimary` changed from white to near-black (`#0A0A08`) to maintain legibility on the yellow primary. All former white-surface usages (NavigationBar, KpiTile, ProductCard backgrounds) migrated to the new `surfaceElevated` token.
+
+**Verification:** `flutter analyze` — 0 issues in customer / manager / shared.
+
+---
 
 ### Seed data — real Dutch Lanka menu (2026-05-15)
 
