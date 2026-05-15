@@ -33,14 +33,15 @@ class MainShell extends StatelessWidget {
       backgroundColor: AppColors.surface,
       body: child,
       bottomNavigationBar: NavigationBar(
-        backgroundColor: AppColors.onPrimary,
-        indicatorColor: AppColors.primary.withValues(alpha: 0.15),
+        backgroundColor: AppColors.surfaceElevated,
+        indicatorColor: AppColors.primary.withValues(alpha: 0.12),
         selectedIndex: _index,
         onDestinationSelected: (i) => context.go(_tabs[i].path),
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: [
           for (final t in _tabs)
             NavigationDestination(
-              icon: Icon(t.icon, color: AppColors.muted),
+              icon: Icon(t.icon, color: AppColors.textTertiary),
               selectedIcon: Icon(t.icon, color: AppColors.primary),
               label: t.label,
             ),

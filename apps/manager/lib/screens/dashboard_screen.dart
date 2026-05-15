@@ -38,20 +38,19 @@ class DashboardScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(Space.xl),
         children: [
+          // Big yellow sales tile spanning full width
+          KpiTile(
+            label: "Today's Sales · Live",
+            highlight: true,
+            value: salesAsync.when(
+              data: (cents) => 'LKR ${(cents / 100).toStringAsFixed(0)}',
+              loading: () => '…',
+              error: (_, _) => '—',
+            ),
+          ),
+          const SizedBox(height: Space.md),
           Row(
             children: [
-              Expanded(
-                child: KpiTile(
-                  label: "Today's sales",
-                  value: salesAsync.when(
-                    data: (cents) =>
-                        'LKR ${(cents / 100).toStringAsFixed(0)}',
-                    loading: () => '…',
-                    error: (_, _) => '—',
-                  ),
-                ),
-              ),
-              const SizedBox(width: Space.md),
               Expanded(
                 child: KpiTile(
                   label: 'Active orders',
